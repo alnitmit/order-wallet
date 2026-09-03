@@ -33,7 +33,7 @@ public class OutboxScheduler {
 
         for (OutboxMessage message : pendingMessages) {
             try {
-                kafkaTemplate.send("order-events", message.getId().toString(), message.getPayload());
+                kafkaTemplate.send("order-events", message.getId().toString(), message.getPayload()).get();
 
                 message.setStatus("PROCESSED");
                 log.info("Сообщение {} успешно отправлено", message.getId());

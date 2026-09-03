@@ -51,10 +51,14 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         try {
+
+            String eventId = java.util.UUID.randomUUID().toString();
+
             Map<String, Object> eventPayload = Map.of(
-                    "orderId", savedOrder.getId(),
+                    "eventId", eventId,
+                    "id", savedOrder.getId(),
                     "userId", savedOrder.getUserId(),
-                    "amount", totalAmount
+                    "totalAmount", totalAmount
             );
 
             String jsonPayload = objectMapper.writeValueAsString(eventPayload);
@@ -89,7 +93,7 @@ public class OrderService {
                         .price(item.getPrice())
                         .quantity(item.getQuantity())
                         .build())
-        .toList();
+                .toList();
 
         return OrderResponse.builder()
                 .id(order.getId())
