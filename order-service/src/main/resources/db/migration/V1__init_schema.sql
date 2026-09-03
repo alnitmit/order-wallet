@@ -20,3 +20,8 @@ CREATE TABLE outbox_messages (
                                  status VARCHAR(50) NOT NULL,
                                  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE inbox_messages (
+                                event_id VARCHAR(255) PRIMARY KEY,
+                                processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

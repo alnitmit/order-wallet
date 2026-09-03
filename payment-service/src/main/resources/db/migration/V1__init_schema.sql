@@ -11,3 +11,15 @@ CREATE TABLE transactions (
                               status VARCHAR(50) NOT NULL,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE inbox_messages (
+                                event_id VARCHAR(255) PRIMARY KEY,
+                                processed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE outbox_messages (
+                                 id UUID PRIMARY KEY,
+                                 event_type VARCHAR(255) NOT NULL,
+                                 payload TEXT NOT NULL,
+                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
