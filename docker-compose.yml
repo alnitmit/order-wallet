@@ -1,6 +1,7 @@
 services:
   order-service:
     build: ./order-service
+    container_name: order-service
     ports:
       - "8081:8081"
     depends_on:
@@ -8,10 +9,27 @@ services:
       - kafka
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/db
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - payment-db
+      - kafka
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://payment-db:5432/payment_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
 
   postgres:
     image: postgres:15-alpine
+    container_name: order-db
     ports:
       - "5433:5432"
     environment:
@@ -21,6 +39,7 @@ services:
 
   payment-db:
     image: postgres:15-alpine
+    container_name: payment-db
     ports:
       - "5434:5432"
     environment:
@@ -30,6 +49,7 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
+    container_name: kafka
     ports:
       - "9092:9092"
     environment:
@@ -37,13 +57,15 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: 'broker,controller'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@localhost:29093'
-      KAFKA_LISTENERS: 'PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093'
-      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://localhost:9092'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT'
+      KAFKA_LISTENERS: 'INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093'
+      KAFKA_ADVERTISED_LISTENERS: 'INTERNAL://kafka:29092,EXTERNAL://localhost:9092'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'INTERNAL'
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   redis:
     image: redis:7-alpine
+    container_name: redis
     ports:
       - "6379:6379"
