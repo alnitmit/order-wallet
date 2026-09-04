@@ -11,7 +11,7 @@
 - предоставляет REST API для управления заказами и платежами
 - использует PostgreSQL c миграциями через Flyway
 - объединяет инфраструктуру с помощью Docker Compose
-- использует интеграция API Gateway для централизованной маршрутизации, rate limiting
+- использует интеграцию API Gateway для централизованной маршрутизации, rate limiting
 
 ## Технологический стек
 
@@ -35,6 +35,7 @@
 
 ## Структура проекта
 
+```text
 root/
 |-- order-service/
 |   |-- src/main/java/com/petproject/order_service/
@@ -62,23 +63,30 @@ root/
 |   |   `-- application.yaml
 |   `-- Dockerfile
 |-- docker-compose.yml
-`-- README.md
+-- README.md
+```
 
 ## Запуск локально с помощью Docker
 
 Из корневой директории проекта:
 
+```bash
 docker compose up -d --build
+```
+
 
 Остановка контейнеров:
 
+```bash
 docker compose down
-
+```
 
 Если нужно пересобрать отдельный сервис без использования Docker cache:
 
+```bash
 docker compose build --no-cache order-service   
 docker compose up -d order-service
+```
 
 ## Запуск локально без Docker
 
@@ -86,29 +94,23 @@ docker compose up -d order-service
 
 Сначала запустите PostgreSQL и Kafka, затем выполните:
 
-#### PowerShell
-
-cd .\order-service
-.\mvnw.cmd spring-boot:run
-
 #### Bash
 
+```bash
 cd order-service
 ./mvnw spring-boot:run
+```
 
 ### Payment Service
 
 Сначала запустите PostgreSQL и Kafka, затем выполните:
 
-#### PowerShell
-
-cd .\payment-service
-.\mvnw.cmd spring-boot:run
-
 #### Bash
 
+```bash
 cd payment-service
 ./mvnw spring-boot:run
+```
 
 ## Сервисы Docker
 
